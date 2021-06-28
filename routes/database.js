@@ -3,8 +3,9 @@ var router = express.Router();
 
 var fs = require("fs");
 
+var databaseName = "database.json";
 var database = {};
-var file = fs.readFileSync("database.json");
+var file = fs.readFileSync(databaseName);
 
 if (file) {
     database = JSON.parse(file);
@@ -21,9 +22,7 @@ router.get("/*", function (req, res, next) {
     req.url.split("/").forEach((part) => {
         if (part != "") {
             let url, index;
-
-            if (part.includes(":")) [url, index] = part.split(":");
-            else url = part;
+            [url, index] = part.split(":");
 
             if (response[url]) {
                 response = response[url];
@@ -53,9 +52,7 @@ router.post("/*", function (req, res, next) {
         req.url.split("/").forEach((part) => {
             if (part != "") {
                 let url, index;
-
-                if (part.includes(":")) [url, index] = part.split(":");
-                else url = part;
+                [url, index] = part.split(":");
 
                 if (response[url]) {
                     response = response[url];
@@ -76,6 +73,7 @@ router.post("/*", function (req, res, next) {
             console.log("no data");
             res.status(400).json({ message: "No data available" });
         } else {
+            fs.writeFile(databaseName, JSON.stringify(database), 'utf8', err => console.log(err))
             res.json(database);
         }
     } catch (err) {
