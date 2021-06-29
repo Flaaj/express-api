@@ -7,7 +7,16 @@
         },
         {
             "siema": {
-                "hej": 43
+                "hej": 43,
+                "hey": {
+                    "hey": {
+                        "field1": "value1",
+                        "field2": [
+                            "value2"
+                        ],
+                        "field3": "value3"
+                    }
+                }
             }
         },
         {

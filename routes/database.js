@@ -11,10 +11,6 @@ if (file) {
     database = JSON.parse(file);
 }
 
-router.get("/hello", function (req, res, next) {
-    res.send("Hello");
-});
-
 router.get("/*", function (req, res, next) {
     let response = JSON.parse(JSON.stringify(database));
 
@@ -46,7 +42,10 @@ router.post("/*", function (req, res, next) {
 
     let dbQuery = "";
 
-    const body = req.body;
+    let body = req.body;
+    let add = {};
+    let addQuery = "";
+    let first = true;
 
     try {
         req.url.split("/").forEach((part) => {
@@ -57,23 +56,32 @@ router.post("/*", function (req, res, next) {
                 if (response[url]) {
                     response = response[url];
                     dbQuery += `['${url}']`;
-
-                    if (index)
+                    if (index == "p") {
+                        if (Array.isArray(response)) {
+                            response.push(body)
+                            body = response
+                        } 
+                    } else if (index)
                         if (response[index]) {
                             response = response[index];
                             dbQuery += `[${index}]`;
                         } else noData = true;
-                } else noData = true;
+                } else {
+                    if (first) eval(`add${addQuery} = {...response}`);
+                    else eval(`add${addQuery} = {}`);
+                    addQuery += `['${url}']`;
+                    first = false;
+                }
             }
         });
-
-        eval(`database${dbQuery} = body`);
+        eval(`add${addQuery} = body`);
+        eval(`database${dbQuery} = add`);
 
         if (noData) {
             console.log("no data");
             res.status(400).json({ message: "No data available" });
         } else {
-            fs.writeFile(databaseName, JSON.stringify(database), 'utf8', err => console.log(err))
+            fs.writeFile(databaseName, JSON.stringify(database), "utf8", (err) => console.log(err));
             res.json(database);
         }
     } catch (err) {

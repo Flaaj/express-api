@@ -1,7 +1,7 @@
 const fetch = require("node-fetch");
-const body = { field1: "value1", field2: "value2", field3: "value3" };
+const body = { field1: "value1", field2: ["value2"], field3: "value3" };
 
-fetch("http://localhost:3000/db/arr:1/siema", {
+fetch("http://localhost:3000/db/arr:p", {
     method: "POST",
     headers: {
         "Content-Type": "application/json",

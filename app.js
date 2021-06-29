@@ -8,8 +8,17 @@ var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var dbRouter = require("./routes/database");
 
+const livereload = require("livereload");
+const connectLivereload = require("connect-livereload");
+
+const liveReloadServer = livereload.createServer();
+liveReloadServer.watch(path.join(__dirname, 'bin'));
+liveReloadServer.watch(path.join(__dirname, 'database.json'));
+
 var app = express();
 
+
+app.use(connectLivereload());
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");
