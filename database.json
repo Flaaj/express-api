@@ -1,1 +1,22 @@
-{"arr":[{"siema":{"hej":42}},{"siema":{"hej":43,"hey":{"hey":{"field1":"value1","field2":["value2",{"field1":"value1","field2":["value2"],"field3":"value3"},{"field1":"value1","field2":["value2"],"field3":"value3"},{"field1":"value1","field2":["value2"],"field3":"value3"},{"field1":"value1","field2":["value2"],"field3":"value3"}],"field3":"value3"}}}},{"siema":{"hej":44}},{"field1":"value1","field2":["value2"],"field3":"value3"},{"field1":"value1","field2":["value2"],"field3":"value3"},{"field1":"value1","field2":["value2"],"field3":"value3"}]}
+{
+    "users": [
+        {
+            "id": "c83ab878-de69-4d1e-bc37-79f9b1d7ff4d",
+            "name": "a name",
+            "age": 20,
+            "email": "email@gmail.com"
+        },
+        {
+            "id": "4e2294e0-7299-4a57-9a29-b0958a46d86f",
+            "name": "a name",
+            "age": 20,
+            "email": "email@gmail.com"
+        },
+        {
+            "id": "3d1864d5-10e7-48a1-80d0-48ae57d5867e",
+            "name": "a name",
+            "age": 20,
+            "email": "email@gmail.com"
+        }
+    ]
+}

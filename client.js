@@ -1,7 +1,8 @@
 const fetch = require("node-fetch");
-const body = { field1: "value1", field2: ["value2"], field3: "value3" };
+// const body = [];
+const body = { name: "a name", age: 20, email: "email@gmail.com" };
 
-fetch("http://localhost:3000/db/arr:p", {
+fetch("http://localhost:3000/db/users", {
     method: "POST",
     headers: {
         "Content-Type": "application/json",

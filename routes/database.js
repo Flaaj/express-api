@@ -3,9 +3,11 @@ var router = express.Router();
 
 var fs = require("fs");
 
-var databaseName = "database.json";
-var database = {};
-var file = fs.readFileSync(databaseName);
+const databaseName = "database.json";
+let database = {};
+const file = fs.readFileSync(databaseName);
+const uuid = require("uuid");
+const uid = uuid.v4;
 
 if (file) {
     database = JSON.parse(file);
@@ -46,9 +48,10 @@ router.post("/*", function (req, res, next) {
     let add = {};
     let addQuery = "";
     let first = true;
+    let respSent = false;
 
     try {
-        req.url.split("/").forEach((part) => {
+        req.url.split("/").forEach((part, i) => {
             if (part != "") {
                 let url, index;
                 [url, index] = part.split(":");
@@ -56,11 +59,9 @@ router.post("/*", function (req, res, next) {
                 if (response[url]) {
                     response = response[url];
                     dbQuery += `['${url}']`;
-                    if (index == "p") {
-                        if (Array.isArray(response)) {
-                            response.push(body)
-                            body = response
-                        } 
+                    if (Array.isArray(response) && req.url.split("/").length - 1 == i) {
+                        response.push({ id: uid(), ...body });
+                        body = response;
                     } else if (index)
                         if (response[index]) {
                             response = response[index];
@@ -86,7 +87,50 @@ router.post("/*", function (req, res, next) {
         }
     } catch (err) {
         console.log(err);
-        res.status(400).json({ message: "Fatal error on the server" });
+        !respSent && res.status(400).json({ message: "Fatal error on the server" });
+    }
+});
+
+router.delete("/*", function (req, res, next) {
+    let response = JSON.parse(JSON.stringify(database));
+    let noData = false;
+    let respSent = false;
+    let dbQuery = "";
+    let isArray = false;
+    let indexToDelete = null;
+    try {
+        req.url.split("/").forEach((part, i) => {
+            if (part != "") {
+                let url, index;
+                [url, index] = part.split(":");
+
+                if (response[url]) {
+                    response = response[url];
+                    dbQuery += `['${url}']`;
+                    if (index)
+                        if (i == req.url.split("/").length - 1 && Array.isArray(response)) {
+                            isArray = true;
+                            indexToDelete = index;
+                        } else if (response[index]) {
+                            response = response[index];
+                            dbQuery += `[${index}]`;
+                        } else noData = true;
+                } else noData = true;
+            }
+        });
+        if (isArray) eval(`database${dbQuery} = database${dbQuery}.filter((_, i) => i != ${indexToDelete})`);
+        else eval(`database${dbQuery} = undefined`);
+
+        if (noData) {
+            console.log("no data");
+            res.status(400).json({ message: "No data available" });
+        } else {
+            fs.writeFile(databaseName, JSON.stringify(database), "utf8", (err) => console.log(err));
+            res.json(database);
+        }
+    } catch (err) {
+        console.log(err);
+        !respSent && res.status(400).json({ message: "Fatal error on the server" });
     }
 });
 
